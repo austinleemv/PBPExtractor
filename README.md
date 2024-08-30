@@ -25,11 +25,6 @@ PBP Flat file is downloaded from medicare.gov site(https://www.cms.gov/data-rese
 ## Notebooks
 ### PBP_Benefit_Decision_Tree.ipynb
 The notebook finds data pattern and find the most weighted data columns that generate the classified benefit costs.  Before implementing the benefit, we need to know whether the new benefit has existing benefit pattern or new benefit structure to write the code.
-![Vision Contact Lense In-network](https://github.com/mymedicarebot/PBPExtractor/blob/main/PBP%20Decision%20Tree%20Classifier%20VISION%20Contact%20lenses%20%2CIn-network.png)
-
-![Hearing Hearing aids - all type In-network](https://github.com/mymedicarebot/PBPExtractor/blob/main/PBP%20Decision%20Tree%20Classifier%20HEARING%20Hearing%20aids%20-%20all%20types%20%2CIn-network.png)
-
-![OTHER SERVICES Durable medical equipment (like wheelchairs & oxygen) ,In-network](https://github.com/mymedicarebot/PBPExtractor/blob/main/PBP%20Decision%20Tree%20Classifier%20OTHER%20SERVICES%20Durable%20medical%20equipment%20(like%20wheelchairs%20%26%20oxygen)%20%2CIn-network.png)
 
 ### PBP_plan_data_extractor_build_individual_benefit_tool.ipynb
 After the analysis on new benefit is completed, we use the notebook to build the benefit cost text for the new benefit.  The notebook continuely verifies the benefit cost logic against the crawled data from medicare.gov.
