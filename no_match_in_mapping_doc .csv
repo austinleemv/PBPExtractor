@@ -1,0 +1,14 @@
+﻿table_column,table_name,json_path
+pbp_a_special_need_plan_type,PBP,$.pbp[*].planCharacteristics.snpType
+pbp_a_plan_identifier,PBP,$.pbp[*].planId
+pbp_a_plan_name,PBP,$.pbp[*].planCharacteristics.planName
+pbp_a_plan_geog_name,PBP,$.pbp[*].planCharacteristics.planName
+pbp_a_org_marketing_name,PBP,$.pbp[*].planCharacteristics.organizationMarketName
+pbp_a_org_name,PBP,$.pbp[*].planCharacteristics.organizationMarketName
+pbp_a_plan_type,PBP,$.pbp[*].planCharacteristics.planTypeLabel
+pbp_a_org_type,PBP,$.pbp[*].planCharacteristics.organizationType
+pbp_a_special_need_flag,PBP,$.pbp[*].planCharacteristics.isSnp
+pbp_b1a_bendesc_yn,PBPB1,$.pbp[*].benefitOfferings.medicare.medicareBenefitOfferingDetails[*].boInNetwork
+pbp_c_oon_copay_ihs_yn,PBPC,$.pbp[*].benefitDetails.benefitDetailsInfo[categoryCode = 1a].benefitDetails.CostShareABComponent.bdCopaymentAmountYesNo=1 when $.pbp[*].planCharacteristsc.isOutOfNetwork = Yes
+pbp_c_pos_coins_ihs_yn,PBPC,"$.pbp[*].benefitDetails.benefitDetailsInfo[categoryCode = 1a].benefitDetails.CostShareABPOSComponent.bdCoinsAmountYesNo = 1 when $.pbp[*].planCharacteristics.offerPOS = ""Yes"""
+pbp_c_pos_copay_ihs_yn,PBPC,"$.pbp[*].benefitDetails.benefitDetailsInfo[categoryCode = 1a].benefitDetails.CostShareABPOSComponent.bdCopaymentAmountYesNo = 1 when $.pbp[*].planCharacteristics.offerPOS = ""Yes"""
