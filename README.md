@@ -24,7 +24,7 @@ PBP Flat file is downloaded from medicare.gov site(https://www.cms.gov/data-rese
 
 ## Notebooks
 ### PBP_Benefit_Decision_Tree.ipynb
-The notebook finds data pattern and find the most weighted data columns that generate the classified benefit costs.  Before implementing the benefit, we need to know whether the new benefit has existing benefit pattern or new benefit structure to write the code.
+The notebook generates decision model sample data for service and the most weighted features that generate the classified benefit costs. Before implementing the benefit, we need to know whether the new service has an existing benefit pattern or a new benefit structure to write the code. Check the use case summary (https://github.com/austinleemv/PBPExtractor/blob/main/Decode%20CMS%20Plan%20Benefit%20Package.docx) for more details.
 
 ### PBP_plan_data_extractor_build_individual_benefit_tool.ipynb
 After the analysis on new benefit is completed, we use the notebook to build the benefit cost text for the new benefit.  The notebook continuely verifies the benefit cost logic against the crawled data from medicare.gov.
