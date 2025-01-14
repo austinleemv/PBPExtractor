@@ -656,15 +656,15 @@ class Benefit_NMC(Benefit_MC):
                 return 'Not covered'
         
         if benefit_text not in ['', '$0 copay', 'Covered under office visit']:
-            if pbp_a_special_need_plan_type == 3 and pbp_a_dsnp_zerodollar == 1:
-                return '$0 copay'
+            # if pbp_a_special_need_plan_type == 3 and pbp_a_dsnp_zerodollar == 1:
+            #    return '$0 copay'
             if pbp_a_special_need_plan_type == 3 and pbp_a_snp_state_cvg_yn == 1:
                 return '$0 copay'
-            if pbp_a_special_need_plan_type == 3 and '$0 copay' not in benefit_text:
-                if pbp_b16a_copay_yn == 1:
-                    benefit_text = '$0 or ' + benefit_text
-                else:
-                    benefit_text = f'0% or ' + benefit_text
+            # if pbp_a_special_need_plan_type == 3 and '$0 copay' not in benefit_text:
+            #    if pbp_b16a_copay_yn == 1:
+            #        benefit_text = '$0 or ' + benefit_text
+            #    else:
+            #        benefit_text = f'0% or ' + benefit_text
         return benefit_text
         
     
@@ -1853,12 +1853,19 @@ class Benefit_16b1(Benefit_NMC):
                 x.pbp_b16b_coins_oe_yn = 1
                 coins_ehc = x.pbp_b16b_coins_ov_svcs
                 x.pbp_b16b_coins_ov_yn = 2
+                if np.isnan(x.pbp_b16b_coins_oe_pct_min):
+                    x.pbp_b16b_coins_oe_pct_min = x.pbp_b16b_coins_ov_pct_min
+                if np.isnan(x.pbp_b16b_coins_oe_pct_max):
+                    x.pbp_b16b_coins_oe_pct_max = x.pbp_b16b_coins_ov_pct_max
 
             if x.pbp_b16b_copay_ov_yn == 1:
                 x.pbp_b16b_copay_oe_yn = 1
                 copay_ehc = x.pbp_b16b_copay_ov_svcs
                 x.pbp_b16b_copay_ov_yn = 2
-            
+                if np.isnan(x.pbp_b16b_copay_oe_amt_min):
+                    x.pbp_b16b_copay_oe_amt_min = x.pbp_b16b_copay_ov_amt_min
+                if np.isnan(x.pbp_b16b_copay_oe_amt_max):
+                    x.pbp_b16b_copay_oe_amt_max = x.pbp_b16b_copay_ov_amt_max
             benefit_text = Benefit_16b1().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
             x.pbp_b16b_copay_ov_yn,x.pbp_b16b_coins_ov_yn, 
             np.nan, np.nan,
@@ -1866,9 +1873,14 @@ class Benefit_16b1(Benefit_NMC):
             x.pbp_b16b_copay_oe_yn,copay_ehc,x.pbp_b16b_copay_oe_amt_min,x.pbp_b16b_copay_oe_amt_max)
             if benefit_text not in ['', '$0 copay', 'Covered under office visit', 'Not covered']:
                 benefit_text += ' per visit'
+            if benefit_text not in ['', 'Not covered']:
+                if x.pbp_b16b_auth_oe_yn == 1 or x.pbp_b16b_refer_oe_yn == 1 or x.pbp_b16b_maxplan_pv_yn == 1 or x.pbp_b16b_bendesc_oe_lim == 2:
+                    benefit_text += "<br/>(Limits apply)"
+
         except:
             benefit_text = 'ERROR'
         return benefit_text
+    
 class Benefit_16b2(Benefit_NMC):
         
     '''
@@ -1893,14 +1905,22 @@ class Benefit_16b2(Benefit_NMC):
             coins_ehc = 111111
             copay_ehc = 111111
             if x.pbp_b16b_coins_ov_yn == 1:
-                x.pbp_b16b_coins_oe_yn = 1
+                x.pbp_b16b_coins_dx_yn = 1
                 coins_ehc = x.pbp_b16b_coins_ov_svcs
                 x.pbp_b16b_coins_ov_yn = 2
+                if np.isnan(x.pbp_b16b_coins_dx_pct_min):
+                    x.pbp_b16b_coins_dx_pct_min = x.pbp_b16b_coins_ov_pct_min
+                if np.isnan(x.pbp_b16b_coins_dx_pct_max):
+                    x.pbp_b16b_coins_dx_pct_max = x.pbp_b16b_coins_ov_pct_max
 
             if x.pbp_b16b_copay_ov_yn == 1:
-                x.pbp_b16b_copay_oe_yn = 1
+                x.pbp_b16b_copay_dx_yn = 1
                 copay_ehc = x.pbp_b16b_copay_ov_svcs
                 x.pbp_b16b_copay_ov_yn = 2
+                if np.isnan(x.pbp_b16b_copay_dx_amt_min):
+                    x.pbp_b16b_copay_dx_amt_min = x.pbp_b16b_copay_ov_amt_min
+                if np.isnan(x.pbp_b16b_copay_dx_amt_max):
+                    x.pbp_b16b_copay_dx_amt_max = x.pbp_b16b_copay_ov_amt_max
             
             benefit_text = Benefit_16b1().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
             x.pbp_b16b_copay_ov_yn,x.pbp_b16b_coins_ov_yn, 
@@ -1909,6 +1929,9 @@ class Benefit_16b2(Benefit_NMC):
             x.pbp_b16b_copay_dx_yn,copay_ehc,x.pbp_b16b_copay_dx_amt_min,x.pbp_b16b_copay_dx_amt_max)
             if benefit_text not in ['', '$0 copay', 'Covered under office visit', 'Not covered']:
                 benefit_text += ' per visit'
+            if benefit_text not in ['', 'Not covered']:
+                if x.pbp_b16b_auth_dx_yn == 1 or x.pbp_b16b_refer_dx_yn == 1 or x.pbp_b16b_maxplan_pv_yn == 1 or x.pbp_b16b_bendesc_dx_lim == 2:
+                    benefit_text += "<br/>(Limits apply)"
         except:
             benefit_text = 'ERROR'
         return benefit_text
@@ -1937,14 +1960,22 @@ class Benefit_16b4(Benefit_NMC):
             coins_ehc = 111111
             copay_ehc = 111111
             if x.pbp_b16b_coins_ov_yn == 1:
-                x.pbp_b16b_coins_oe_yn = 1
+                x.pbp_b16b_coins_pc_yn = 1
                 coins_ehc = x.pbp_b16b_coins_ov_svcs
                 x.pbp_b16b_coins_ov_yn = 2
+                if np.isnan(x.pbp_b16b_coins_pc_pct_min):
+                    x.pbp_b16b_coins_pc_pct_min = x.pbp_b16b_coins_ov_pct_min
+                if np.isnan(x.pbp_b16b_coins_pc_pct_max):
+                    x.pbp_b16b_coins_pc_pct_max = x.pbp_b16b_coins_ov_pct_max
 
             if x.pbp_b16b_copay_ov_yn == 1:
-                x.pbp_b16b_copay_oe_yn = 1
+                x.pbp_b16b_copay_pc_yn = 1
                 copay_ehc = x.pbp_b16b_copay_ov_svcs
                 x.pbp_b16b_copay_ov_yn = 2
+                if np.isnan(x.pbp_b16b_copay_pc_amt_min):
+                    x.pbp_b16b_copay_pc_amt_min = x.pbp_b16b_copay_ov_amt_min
+                if np.isnan(x.pbp_b16b_copay_pc_amt_max):
+                    x.pbp_b16b_copay_pc_amt_max = x.pbp_b16b_copay_ov_amt_max
             
             benefit_text = Benefit_16b4().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
             x.pbp_b16b_copay_ov_yn,x.pbp_b16b_coins_ov_yn, 
@@ -1953,6 +1984,10 @@ class Benefit_16b4(Benefit_NMC):
             x.pbp_b16b_copay_pc_yn,copay_ehc,x.pbp_b16b_copay_pc_amt_min,x.pbp_b16b_copay_pc_amt_max)
             if benefit_text not in ['', '$0 copay', 'Covered under office visit', 'Not covered']:
                 benefit_text += ' per visit'
+            
+            if benefit_text not in ['', 'Not covered']:
+                if x.pbp_b16b_auth_pc_yn == 1 or x.pbp_b16b_refer_pc_yn == 1 or x.pbp_b16b_maxplan_pv_yn == 1 or x.pbp_b16b_bendesc_pc_lim == 2:
+                    benefit_text += "<br/>(Limits apply)"
         except:
             benefit_text = 'ERROR'
         return benefit_text
@@ -1980,15 +2015,25 @@ class Benefit_16b5(Benefit_NMC):
         try:
             coins_ehc = 111111
             copay_ehc = 111111
-            if x.pbp_b16b_coins_ov_yn == 1:
-                x.pbp_b16b_coins_oe_yn = 1
-                coins_ehc = x.pbp_b16b_coins_ov_svcs
+            if x.pbp_b16b_coins_ov_yn == 1 or x.pbp_b16b_coins_ov_yn == 3:
                 x.pbp_b16b_coins_ov_yn = 2
+                if int(('000000' + str(int(x.pbp_b16b_coins_ov_svcs)))[0-Benefit_16b5.BENEDESC_EHC_TOTAL_SERVICE:][Benefit_16b5.BENEDESC_EHC_SERVICE - 1]) == 1:
+                    x.pbp_b16b_coins_ft_yn = 1
+                    coins_ehc = int(x.pbp_b16b_coins_ov_svcs)
+                    if np.isnan(x.pbp_b16b_coins_ft_pct_min):
+                        x.pbp_b16b_coins_ft_pct_min = x.pbp_b16b_coins_ov_pct_min
+                    if np.isnan(x.pbp_b16b_coins_ft_pct_max):
+                        x.pbp_b16b_coins_ft_pct_max = x.pbp_b16b_coins_ov_pct_max
 
-            if x.pbp_b16b_copay_ov_yn == 1:
-                x.pbp_b16b_copay_oe_yn = 1
-                copay_ehc = x.pbp_b16b_copay_ov_svcs
+            if x.pbp_b16b_copay_ov_yn == 1 or x.pbp_b16b_copay_ov_yn == 3:
                 x.pbp_b16b_copay_ov_yn = 2
+                if int(('000000' + str(int(x.pbp_b16b_copay_ov_svcs)))[0-Benefit_16b5.BENEDESC_EHC_TOTAL_SERVICE:][Benefit_16b5.BENEDESC_EHC_SERVICE - 1]) == 1:
+                    x.pbp_b16b_copay_ft_yn = 1
+                    copay_ehc = int(x.pbp_b16b_copay_ov_svcs)
+                    if np.isnan(x.pbp_b16b_copay_ft_amt_min):
+                        x.pbp_b16b_copay_ft_amt_min = x.pbp_b16b_copay_ov_amt_min
+                    if np.isnan(x.pbp_b16b_copay_ft_amt_max):
+                        x.pbp_b16b_copay_ft_amt_max = x.pbp_b16b_copay_ov_amt_max
             
             benefit_text = Benefit_16b4().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
             x.pbp_b16b_copay_ov_yn,x.pbp_b16b_coins_ov_yn, 
@@ -1997,6 +2042,9 @@ class Benefit_16b5(Benefit_NMC):
             x.pbp_b16b_copay_ft_yn,copay_ehc,x.pbp_b16b_copay_ft_amt_min,x.pbp_b16b_copay_ft_amt_max)
             if benefit_text not in ['', '$0 copay', 'Covered under office visit', 'Not covered']:
                 benefit_text += ' per visit'
+            if benefit_text not in ['', 'Not covered']:
+                if x.pbp_b16b_auth_ft_yn == 1 or x.pbp_b16b_refer_ft_yn == 1 or x.pbp_b16b_maxplan_pv_yn == 1  or x.pbp_b16b_bendesc_ft_lim == 2:
+                    benefit_text += "<br/>(Limits apply)"
         except:
             benefit_text = 'ERROR'
         return benefit_text
@@ -2019,11 +2067,16 @@ class Benefit_17a1(Benefit_NMC):
         
     @staticmethod
     def get_INN_text(x):
-        return Benefit_17a1().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
+        benefit_text = Benefit_17a1().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
                                               np.nan, np.nan, 
                                              x.pbp_b17a_bendesc_yn, x.pbp_b17a_bendesc_ehc,
     x.pbp_b17a_coins_yn,x.pbp_b17a_coins_ehc,x.pbp_b17a_coins_pct_rex_min, x.pbp_b17a_coins_pct_rex_max,
     x.pbp_b17a_copay_yn,x.pbp_b17a_copay_ehc,x.pbp_b17a_copay_amt_rex_min, x.pbp_b17a_copay_amt_rex_max)
+        
+        if benefit_text not in ['', 'Not covered']:
+            if x.pbp_b17a_auth_yn == 1 or x.pbp_b17a_refer_yn == 1 or x.pbp_b17a_maxplan_yn == 1 or x.pbp_b17a_bendesc_lim_rex == 2:
+                benefit_text += "<br/>(Limits apply)"
+        return benefit_text
     
 class Benefit_17b(Benefit_MC_EHC):
     EHC_TOTAL_SERVICE = 6
@@ -2031,10 +2084,14 @@ class Benefit_17b(Benefit_MC_EHC):
 
     @staticmethod
     def get_INN_text(x):
-        inn_benefit = Benefit_17b().get_mc_ehc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn,
+        benefit_text = Benefit_17b().get_mc_ehc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn,
                                                     x.pbp_b17b_copay_yn,x.pbp_b17b_copay_ehc, x.pbp_b17b_copay_amt_mc_min, x.pbp_b17b_copay_amt_mc_max,
                                                     x.pbp_b17b_coins_yn,x.pbp_b17b_coins_ehc, x.pbp_b17b_coins_pct_mc_min, x.pbp_b17b_coins_pct_mc_max)
-        return inn_benefit
+        
+        if benefit_text not in ['', 'Not covered']:
+            if x.pbp_b17b_auth_yn == 1 or x.pbp_b17b_refer_yn == 1 or x.pbp_b17b_maxplan_yn:
+                benefit_text += "<br/>(Limits apply)"
+        return benefit_text
 
 class Benefit_17b1(Benefit_NMC):
     '''
@@ -2060,11 +2117,16 @@ class Benefit_17b1(Benefit_NMC):
     @staticmethod
     def get_INN_text(x):
         b17b1 = Benefit_17b1()
-        return b17b1.get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn,
+        benefit_text = b17b1.get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn,
                                               np.nan, np.nan, 
                                              x.pbp_b17b_bendesc_yn, x.pbp_b17b_bendesc_ehc,
     x.pbp_b17b_coins_yn,x.pbp_b17b_coins_ehc,x.pbp_b17b_coins_pct_cl_min,x.pbp_b17b_coins_pct_cl_max,
     x.pbp_b17b_copay_yn,x.pbp_b17b_copay_ehc,x.pbp_b17b_copay_amt_cl_min,x.pbp_b17b_copay_amt_cl_max)
+        
+        if benefit_text not in ['', 'Not covered']:
+            if x.pbp_b17b_auth_yn == 1 or x.pbp_b17b_refer_yn == 1 or x.pbp_b17b_maxplan_yn:
+                benefit_text += "<br/>(Limits apply)"
+        return benefit_text
         
 class Benefit_17b2(Benefit_NMC):
     '''
@@ -2090,11 +2152,15 @@ class Benefit_17b2(Benefit_NMC):
     @staticmethod
     def get_INN_text(x):
         b17b1 = Benefit_17b2()
-        return b17b1.get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
+        benefit_text= b17b1.get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
                                               np.nan, np.nan, 
                                              x.pbp_b17b_bendesc_yn, x.pbp_b17b_bendesc_ehc,
     x.pbp_b17b_coins_yn,x.pbp_b17b_coins_ehc,x.pbp_b17b_coins_pct_egs_min, x.pbp_b17b_coins_pct_egs_max,
     x.pbp_b17b_copay_yn,x.pbp_b17b_copay_ehc,x.pbp_b17b_copay_amt_egs_min, x.pbp_b17b_copay_amt_egs_max)
+        if benefit_text not in ['', 'Not covered']:
+            if x.pbp_b17b_auth_yn == 1 or x.pbp_b17b_refer_yn == 1 or x.pbp_b17b_maxplan_yn:
+                benefit_text += "<br/>(Limits apply)"
+        return benefit_text
         
 class Benefit_17b3(Benefit_NMC):
     '''
@@ -2120,11 +2186,15 @@ class Benefit_17b3(Benefit_NMC):
     @staticmethod
     def get_INN_text(x):
         b17b1 = Benefit_17b3()
-        return b17b1.get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
+        benefit_text = b17b1.get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
                                               np.nan, np.nan, 
                                              x.pbp_b17b_bendesc_yn, x.pbp_b17b_bendesc_ehc,
     x.pbp_b17b_coins_yn,x.pbp_b17b_coins_ehc,x.pbp_b17b_coins_pct_egl_min, x.pbp_b17b_coins_pct_egl_max,
     x.pbp_b17b_copay_yn,x.pbp_b17b_copay_ehc,x.pbp_b17b_copay_amt_egl_min, x.pbp_b17b_copay_amt_egl_max)
+        if benefit_text not in ['', 'Not covered']:
+            if x.pbp_b17b_auth_yn == 1 or x.pbp_b17b_refer_yn == 1 or x.pbp_b17b_maxplan_yn:
+                benefit_text += "<br/>(Limits apply)"
+        return benefit_text
                 
 class Benefit_17b4(Benefit_NMC):
     '''
@@ -2149,11 +2219,15 @@ class Benefit_17b4(Benefit_NMC):
     
     @staticmethod
     def get_INN_text(x):
-        return Benefit_17b4().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
+        benefit_text= Benefit_17b4().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn, 
                                               np.nan, np.nan, 
                                              x.pbp_b17b_bendesc_yn, x.pbp_b17b_bendesc_ehc,
     x.pbp_b17b_coins_yn,x.pbp_b17b_coins_ehc,x.pbp_b17b_coins_pct_egf_min,x.pbp_b17b_coins_pct_egf_max,
     x.pbp_b17b_copay_yn,x.pbp_b17b_copay_ehc,x.pbp_b17b_copay_amt_egf_min, x.pbp_b17b_copay_amt_egf_max)
+        if benefit_text not in ['', 'Not covered']:
+            if x.pbp_b17b_auth_yn == 1 or x.pbp_b17b_refer_yn == 1 or x.pbp_b17b_maxplan_yn:
+                benefit_text += "<br/>(Limits apply)"
+        return benefit_text
         
 class Benefit_17b5(Benefit_NMC):
     '''
@@ -2178,11 +2252,15 @@ class Benefit_17b5(Benefit_NMC):
     
     @staticmethod
     def get_INN_text(x):
-        return Benefit_17b5().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn,
+        benefit_text = Benefit_17b5().get_nmc_inn_benefit_text(x.pbp_a_special_need_plan_type, x.pbp_a_dsnp_zerodollar, x.pbp_a_snp_state_cvg_yn,
                                               np.nan, np.nan, 
                                              x.pbp_b17b_bendesc_yn, x.pbp_b17b_bendesc_ehc,
     x.pbp_b17b_coins_yn,x.pbp_b17b_coins_ehc,x.pbp_b17b_coins_pct_upg_min, x.pbp_b17b_coins_pct_upg_max,
     x.pbp_b17b_copay_yn,x.pbp_b17b_copay_ehc,x.pbp_b17b_copay_amt_upg_min, x.pbp_b17b_copay_amt_upg_max)
+        if benefit_text not in ['', 'Not covered']:
+            if x.pbp_b17b_auth_yn == 1 or x.pbp_b17b_refer_yn == 1 or x.pbp_b17b_maxplan_yn:
+                benefit_text += "<br/>(Limits apply)"
+        return benefit_text
   
 class Benefit_18a(Benefit_MC_EHC):
     '''
